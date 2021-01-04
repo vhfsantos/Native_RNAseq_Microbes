@@ -129,10 +129,10 @@ command from the
 
 # set input_path, save_path, search in all folders for fast5 files, set number of threads
 multi_to_single_fast5 \
-    --input_path <path folder containing multi_read_fast5 files> \
-    --save_path <path to folder where single_read fast5 files will be output> \
-    --recursive <recursively search sub-directories> \
-    --threads <number of CPU threads to use>
+    --input_path multi_read_fast \
+    --save_path single_read_fast5 \
+    --recursive \
+    --threads 10
 ```
 
 The output will be single-read FAST5 files in the *save\_path* folder
@@ -185,13 +185,13 @@ separate folders with:
 
 # trim adapters, basecall using albacore, de-multiplex, create symbolic fast5 link, increase number of working processes, sort reads to folders according to barcodes
 poreplex \
-    -i <path/to/fast5> \
-    -o <path/to/output> \
-    --trim-adapter <trim 3′ adapter sequences from FASTQ outputs> \
-    --barcoding <sort barcoded reads into separate outputs> \
-    --basecall <call the ONT albacore for basecalling on-the-fly> \
-    --symlink-fast5 <create symbolic links to FAST5 files in output directories even when hard linking is possible> \
-    --parallel <number of worker processes>
+    -i single_read_fast5 \
+    -o poreplex_output \
+    --trim-adapter \
+    --barcoding \
+    --basecall \
+    --symlink-fast5 \
+    --parallel 10
 ```
 
 Reads can be basecalled automatically during demultiplexing using
@@ -214,16 +214,16 @@ reads:
 #!/bin/bash
 
 guppy_basecaller \
-    --flowcell FLO-MIN106 <flowcell-version> \
-    --kit SQK-RNA001 <sequencing-kit> \
-    --input $input <path to input FAST5 files> \
-    --save_path $output <path to output> \
-    --recursive <search input folders recursively> \
-    --reverse_sequence yes <as RNA is sequenced from 3´to 5´> \
-    --hp_correct 1 <enable homopolymer correction> \
-    --enable_trimming <trim RNA reads> \
-    --cpu_threads_per_caller <set number of threads> \
-    --calib_detect <detect RCS spike in>
+    --flowcell FLO-MIN106 \
+    --kit SQK-RNA001 \
+    --input single_read_fast5 \
+    --save_path guppy_data \
+    --recursive \
+    --reverse_sequence yes \
+    --hp_correct 1\
+    --enable_trimming\
+    --cpu_threads_per_caller \
+    --calib_detect
 ```
 
 Demultiplexed files from *fast5\_failed* and *fast5\_passed* folders can
@@ -235,11 +235,11 @@ with:
 
 # FASTQ
 ### e.g. for BC1 failed and passed folders
-cat $dir/guppy_data/BC1_fail/*.fastq $dir/guppy_data/BC1_pass/*.fastq > $dir/fastq_data/BC1_combined.fastq
+cat guppy_data/BC1_fail/*.fastq guppy_data/BC1_pass/*.fastq > fastq_data/BC1_combined.fastq
 
 # Sequencing summary
 ### e.g. for BC1 failed and passed folders
-cat $dir/guppy_data/BC1_fail/sequencing_summary.txt $dir/guppy_data/BC1_pass/sequencing_summary.txt > $dir/summary_data/BC1_sequencing_summary.txt
+cat guppy_data/BC1_fail/sequencing_summary.txt guppy_data/BC1_pass/sequencing_summary.txt > summary_data/BC1_sequencing_summary.txt
 ```
 
 ### Mapping using [`minimap2`](https://github.com/lh3/minimap2)
@@ -263,8 +263,10 @@ Strand-specific wig and bigwig files were finally created using
 #!/bin/bash
 
 # set file paths
-dir=<path_to_basedir>
+dir=`pwd`
+### change here ###
 genome_fasta=<path_to_fasta_file>(downloaded from NCBI)
+###################
 out_dir=$dir/mapped_data
 
 # map using minimap2 | convert using samtools and bam2wig
@@ -300,7 +302,7 @@ quality control analysis.
 #!/bin/bash
 
 # set file paths
-dir=<path_to_basedir>
+dir=`pwd`
 genome_fasta=<path_to_enolase_file>
 out_dir=$dir/mapped_data
 
