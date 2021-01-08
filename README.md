@@ -272,22 +272,22 @@ out_dir=$dir/mapped_data
 # map using minimap2 | convert using samtools and bam2wig
 for file in $dir/fastq_data/*_combined.fastq # path to all of the merged .fastq files
 do 
-  filename_extended=$file##*/
-  filename=$filename_extended%%.*
-  minimap2 -p 0.99 -ax splice -k14 --MD -uf $genome_fasta $file > $out_dir/$filename".sam" # map using minimaps2
-  samtools flagstat $out_dir/$filename".sam" > $out_dir/$filename"_stats.txt" # calculate mapping statistics
-  samtools view -bS $out_dir/$filename".sam" -o $out_dir/$filename".bam" # sam to bam
-  samtools sort $out_dir/$filename".bam" -o $out_dir/$filename"_sorted.bam" # bam to sorted bam 
-  samtools index $out_dir/$filename"_sorted.bam" # index sorted bam file 
-  samtools view -h -F 16 $out_dir/$filename".bam" > $out_dir/$filename"_forward.bam" # create strand specific bam files
-  samtools view -h -f 16 $out_dir/$filename".bam" > $out_dir/$filename"_reverse.bam" # strand specific bam files
-  samtools sort $out_dir/$filename"_forward.bam" -o $out_dir/$filename"_forward_sorted.bam" # sort 
-  samtools sort $out_dir/$filename"_reverse.bam" -o $out_dir/$filename"_reverse_sorted.bam" # sort
-  samtools depth -a -d 0 $out_dir/$filename"_forward_sorted.bam" >  $out_dir/$filename"_forward_sorted_depth.txt" # calculate number of reads for each position in a strand specific way (no threshold set) and write to bed-like txt file
-  samtools depth -a -d 0 $out_dir/$filename"_reverse_sorted.bam" > $out_dir/$filename"_reverse_sorted_depth.txt" # calculate number of reads for each position in a strand specific way (no threshold set) and write to bed-like txt file
-  ./bam2wig $out_dir/$filename"_sorted.bam" # create wig files from bam files, all reads
-  ./bam2wig -s top $out_dir/$filename"_sorted.bam" # create wig files from bam files, top strand
-  ./bam2wig -s bottom $out_dir/$filename"_sorted.bam" # create wig files from bam files, bottom strand
+  filename_extended=${file##*/}
+  filename=${filename_extended%%.*}
+  minimap2 -p 0.99 -ax splice -k14 --MD -uf $genome_fasta $file > ${out_dir}/${filename}".sam" # map using minimaps2
+  samtools flagstat ${out_dir}/${filename}".sam" > ${out_dir}/${filename}"_stats.txt" # calculate mapping statistics
+  samtools view -bS ${out_dir}/${filename}".sam" -o ${out_dir}/${filename}".bam" # sam to bam
+  samtools sort ${out_dir}/${filename}".bam" -o ${out_dir}/${filename}"_sorted.bam" # bam to sorted bam 
+  samtools index ${out_dir}/${filename}"_sorted.bam" # index sorted bam file 
+  samtools view -h -F 16 ${out_dir}/${filename}".bam" > ${out_dir}/${filename}"_forward.bam" # create strand specific bam files
+  samtools view -h -f 16 ${out_dir}/${filename}".bam" > ${out_dir}/${filename}"_reverse.bam" # strand specific bam files
+  samtools sort ${out_dir}/${filename}"_forward.bam" -o ${out_dir}/${filename}"_forward_sorted.bam" # sort 
+  samtools sort ${out_dir}/${filename}"_reverse.bam" -o ${out_dir}/${filename}"_reverse_sorted.bam" # sort
+  samtools depth -a -d 0 ${out_dir}/${filename}"_forward_sorted.bam" >  ${out_dir}/${filename}"_forward_sorted_depth.txt" # calculate number of reads for each position in a strand specific way (no threshold set) and write to bed-like txt file
+  samtools depth -a -d 0 ${out_dir}/${filename}"_reverse_sorted.bam" > ${out_dir}/${filename}"_reverse_sorted_depth.txt" # calculate number of reads for each position in a strand specific way (no threshold set) and write to bed-like txt file
+  ./bam2wig ${out_dir}/${filename}"_sorted.bam" # create wig files from bam files, all reads
+  ./bam2wig -s top ${out_dir}/${filename}"_sorted.bam" # create wig files from bam files, top strand
+  ./bam2wig -s bottom ${out_dir}/${filename}"_sorted.bam" # create wig files from bam files, bottom strand
   echo $filename "mapping finished" 
 done
 ```
