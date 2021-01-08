@@ -267,7 +267,7 @@ dir=`pwd`
 ### change here ###
 genome_fasta=<path_to_fasta_file>(downloaded from NCBI)
 ###################
-out_dir=$dir/mapped_data
+out_dir=${dir}/mapped_data
 
 # map using minimap2 | convert using samtools and bam2wig
 for file in ${dir}/fastq_data/*_combined.fastq # path to all of the merged .fastq files
